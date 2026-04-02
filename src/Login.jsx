@@ -1,99 +1,119 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import axios from "axios";
-
+import './Forms.css';
 
 export default function Login() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [weight ,setWeight] = useState("");
+  const [weight, setWeight] = useState("");
   const [disease, setDisease] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newPatient = {name,age, gender, weight, disease, };
+    const newPatient = { name, age, gender, weight, disease };
 
-    console.log("Patient data:", newPatient);
+    try {
+      const response = await axios.post(
+        "https://doc-back.onrender.com/patients",
+        newPatient
+      );
 
-    axios
-      .post("https://doc-back.onrender.com/patients", newPatients)
-      .then((res) => {
-        console.log("Response:", res);
-        alert("patient login successfully!");
-        
-        
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        alert("Error! Please try again.");
-      });
+      console.log("Response:", response.data);
+      alert("Patient added successfully!");
+
+      setName("");
+      setAge("");
+      setGender("");
+      setWeight("");
+      setDisease("");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error! Please try again.");
+    }
   };
 
   return (
-    
+    <div className="form-wrapper">
+      <div className="form-container">
+        <div className="form-header">
+          <p style={{fontSize: '2.5rem', marginBottom: '0.5rem'}}>🩺</p>
+          <h2>Patient Admission</h2>
+          <p>Please enter the patient's information to register them in our system.</p>
+        </div>
 
-    
-      <div className="register-form">
-        <h1>Login Form</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Name: </label>
+            <label>Patient Name</label>
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Enter full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              className="form-input"
             />
           </div>
 
-          <div className="form-group">
-            <label>Age:  </label>
-            <input
-              type="number"
-              placeholder="Enter age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              required
-            />
+          <div style={{display: 'flex', gap: '1rem'}}>
+            <div className="form-group" style={{flex: 1}}>
+              <label>Age</label>
+              <input
+                type="number"
+                placeholder="Years"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                required
+                className="form-input"
+              />
+            </div>
+            <div className="form-group" style={{flex: 1}}>
+              <label>Weight (kg)</label>
+              <input
+                type="number"
+                placeholder="kg"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                required
+                className="form-input"
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Gender:  </label>
-            <input
-              type="text"
-              placeholder="Enter gender"
+            <label>Gender</label>
+            <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
               required
-            />
+              className="form-input"
+              style={{cursor: 'pointer'}}
+            >
+              <option value="" disabled>Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
 
           <div className="form-group">
-            <label>Weight: </label>
-            <input
-              type="number"
-              placeholder="Enter weight"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Disease: </label>
+            <label>Diagnosis / Disease</label>
             <input
               type="text"
-              placeholder="Enter disease"
+              placeholder="Primary condition"
               value={disease}
               onChange={(e) => setDisease(e.target.value)}
               required
+              className="form-input"
             />
           </div>
 
-          <button type="submit">Submit</button>
+          <button type="submit" className="submit-btn">
+            Register Patient
+          </button>
         </form>
       </div>
+    </div>
   );
-}
+}
